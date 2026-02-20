@@ -1,7 +1,283 @@
 <!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>OK</title></head>
-  <body>
-    <h1>✅ GitHub Pages is rendering HTML</h1>
-  </body>
+<html lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sales Navigator Company URL Builder (Team Share)</title>
+  <style>
+    body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans","Noto Sans CJK JP",sans-serif;
+           margin: 24px; line-height: 1.4; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; max-width: 980px; }
+    textarea { width: 100%; min-height: 180px; font-size: 14px; padding: 10px; }
+    input[type="text"] { width: 100%; font-size: 14px; padding: 10px; }
+    select, button { font-size: 14px; padding: 10px 12px; }
+    .muted { color: #666; font-size: 12px; }
+    .out { width: 100%; min-height: 110px; font-size: 12px; padding: 10px; }
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;}
+    .ok { color: #0a7; font-weight: 600; }
+    .warn { color: #c60; font-weight: 600; }
+    code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
+    .small { font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h2>Sales Navigator Company URL Builder <span class="pill">Team Share</span></h2>
+  <p class="muted">
+    输入公司名（每行一个）。选择筛选模式（former/current/both），一键生成：
+    <span class="ok">团队共享版 URL（不含 sessionId）</span> + <span class="warn">个人版 URL（含 sessionId，可选）</span>。
+  </p>
+
+  <div class="card">
+    <div class="row">
+      <div style="flex: 2 1 520px;">
+        <label><b>公司名单（每行一个，日文/英文都可以）</b></label>
+        <textarea id="companies" placeholder="例如：
+高砂香料工業
+長谷川香料
+International Flavors & Fragrances
+Archer-Daniels-Midland
+"></textarea>
+        <div class="muted small">
+          支持你之前的“JP一行/EN一行”的格式：网页会自动当作两行两家公司处理（不会合并），你也可以只给一行。
+        </div>
+      </div>
+
+      <div style="flex: 1 1 260px;">
+        <label><b>筛选模式</b></label>
+        <select id="mode" style="width:100%;">
+          <option value="PAST">former only (PAST_COMPANY)</option>
+          <option value="CURRENT">current only (CURRENT_COMPANY)</option>
+          <option value="BOTH">both (CURRENT + PAST)</option>
+        </select>
+
+        <div style="height:12px;"></div>
+
+        <label><b>你的 sessionId（可选）</b></label>
+        <input id="sessionId" type="text" placeholder="例如 uxiEiZxoT3uEC+7v3ul6vQ==" />
+        <div class="muted small">
+          留空也没问题：你会得到团队共享版（不含 sessionId）的 URL。
+          只有你想生成“个人版”时再填。
+        </div>
+
+        <div style="height:12px;"></div>
+
+        <label><b>自动补全（别名字典）</b></label>
+        <select id="dictMode" style="width:100%;">
+          <option value="ON" selected>ON（推荐）</option>
+          <option value="OFF">OFF（只用原始输入）</option>
+        </select>
+
+        <div class="btns">
+          <button id="buildBtn">生成 URL</button>
+          <button id="copyTeamBtn">复制团队共享版</button>
+          <button id="copyPersonalBtn">复制个人版</button>
+        </div>
+
+        <div id="status" class="muted small" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <label><b>输出（Team URL / Personal URL）</b></label>
+    <textarea id="output" class="out" readonly></textarea>
+    <div class="muted small">
+      团队共享版：不含 <code>sessionId</code>，任何同事登录 Sales Navigator 后都可用。<br/>
+      个人版：含 <code>sessionId</code>，更贴近你当前会话（可选）。
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <label><b>实际用于 query 的公司关键词（展开后）</b></label>
+    <textarea id="expanded" class="out" readonly></textarea>
+    <div class="muted small">
+      这里能看到自动补全到底加了哪些别名，方便你判断是否“过泛”。
+    </div>
+  </div>
+
+<script>
+  // ---------- Helpers ----------
+  function uniq(arr) {
+    const seen = new Set();
+    const out = [];
+    for (const x of arr) {
+      const k = (x || "").trim();
+      if (!k) continue;
+      const key = k.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(k);
+    }
+    return out;
+  }
+
+  function stripKabushikiKaishaJP(name) {
+    // Remove "株式会社" if present anywhere
+    return name.replace(/株式会社/g, "").trim();
+  }
+
+  function stripCoLtdEN(name) {
+    // Remove common suffixes: Co., Ltd. / Co.,Ltd. / Co. Ltd. / Company Limited / Ltd. / Limited
+    let s = name;
+    s = s.replace(/\bCo\.,?\s*Ltd\.?\b/gi, "").trim();
+    s = s.replace(/\bCompany\s+Limited\b/gi, "").trim();
+    s = s.replace(/\bLtd\.?\b/gi, "").trim();
+    s = s.replace(/\bLimited\b/gi, "").trim();
+    // clean trailing punctuation/spaces
+    s = s.replace(/[,\.\-–—\s]+$/g, "").trim();
+    return s;
+  }
+
+  function encodeQueryObj(queryObj) {
+    return encodeURIComponent(queryObj);
+  }
+
+  function buildValuesList(names) {
+    // (text:xxx,selectionType:INCLUDED),(text:yyy,selectionType:INCLUDED)...
+    return names.map(n => `(text:${n},selectionType:INCLUDED)`).join(",");
+  }
+
+  function buildSNUrl({ mode, names, sessionId }) {
+    const values = buildValuesList(names);
+    const recent = `(recentSearchParam:(doLogHistory:true))`;
+
+    let filters = "";
+    if (mode === "PAST") {
+      filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;
+    } else if (mode === "CURRENT") {
+      filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;
+    } else { // BOTH
+      filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;
+    }
+
+    const queryObj = `(${recent},${filters})`;
+    const base = `https://www.linkedin.com/sales/search/people?query=${encodeQueryObj(queryObj)}&viewAllFilters=true`;
+    if (sessionId && sessionId.trim()) {
+      return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
+    }
+    return base;
+  }
+
+  // ---------- Auto expansion dictionary ----------
+  // You can extend this over time. Keys are the "canonical inputs" you type.
+  const EXPANSION_DICT = {
+    "高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],
+    "長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],
+    "小川香料": ["Ogawa & Co., Ltd.", "Ogawa &"],
+    "塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],
+    // common global abbreviations
+    "Archer-Daniels-Midland": ["ADM"],
+    "International Flavors & Fragrances": ["IFF"]
+  };
+
+  function expandNames(inputNames, dictOn) {
+    let out = [];
+    for (const raw of inputNames) {
+      const n = raw.trim();
+      if (!n) continue;
+
+      // Always include original
+      out.push(n);
+
+      // Default 4-variant rule (JP / EN stripping)
+      const jpStripped = stripKabushikiKaishaJP(n);
+      if (jpStripped && jpStripped !== n) out.push(jpStripped);
+
+      const enStripped = stripCoLtdEN(n);
+      if (enStripped && enStripped !== n) out.push(enStripped);
+
+      // Dict expansions (only when ON)
+      if (dictOn) {
+        // Exact match expansion
+        if (EXPANSION_DICT[n]) out.push(...EXPANSION_DICT[n]);
+
+        // Also try expansion for stripped forms (useful if user inputs with 株式会社 or Co.,Ltd)
+        if (EXPANSION_DICT[jpStripped]) out.push(...EXPANSION_DICT[jpStripped]);
+        if (EXPANSION_DICT[enStripped]) out.push(...EXPANSION_DICT[enStripped]);
+      }
+    }
+
+    // Also apply strip rules to the expansions themselves (so "CO., LTD." version -> stripped version)
+    const secondPass = [];
+    for (const x of out) {
+      secondPass.push(x);
+      const jp = stripKabushikiKaishaJP(x); if (jp && jp !== x) secondPass.push(jp);
+      const en = stripCoLtdEN(x); if (en && en !== x) secondPass.push(en);
+    }
+
+    return uniq(secondPass);
+  }
+
+  // ---------- UI ----------
+  const $companies = document.getElementById("companies");
+  const $mode = document.getElementById("mode");
+  const $sessionId = document.getElementById("sessionId");
+  const $dictMode = document.getElementById("dictMode");
+  const $output = document.getElementById("output");
+  const $expanded = document.getElementById("expanded");
+  const $status = document.getElementById("status");
+
+  let lastTeamUrl = "";
+  let lastPersonalUrl = "";
+
+  function parseCompanies(text) {
+    // Each non-empty line is one "input token"
+    return text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  }
+
+  function build() {
+    const input = parseCompanies($companies.value);
+    const mode = $mode.value;
+    const dictOn = ($dictMode.value === "ON");
+    const expanded = expandNames(input, dictOn);
+
+    // Team URL: no sessionId
+    lastTeamUrl = buildSNUrl({ mode, names: expanded, sessionId: "" });
+
+    // Personal URL: with sessionId if provided
+    lastPersonalUrl = buildSNUrl({ mode, names: expanded, sessionId: $sessionId.value });
+
+    $output.value =
+`[Team Share URL - no sessionId]
+${lastTeamUrl}
+
+[Personal URL - with sessionId (optional)]
+${lastPersonalUrl}`;
+
+    $expanded.value = expanded.join("\n");
+
+    const approxLen = lastTeamUrl.length;
+    const warn = approxLen > 7000 ? "（⚠️ 可能过长，若打开异常建议减少公司数或关闭字典）" : "";
+    $status.textContent = `已生成：公司关键词 ${expanded.length} 个；Team URL 长度 ${approxLen}${warn}`;
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  document.getElementById("buildBtn").addEventListener("click", build);
+
+  document.getElementById("copyTeamBtn").addEventListener("click", async () => {
+    if (!lastTeamUrl) build();
+    const ok = await copyText(lastTeamUrl);
+    $status.textContent = ok ? "已复制团队共享版 URL" : "复制失败：请手动选中输出框复制";
+  });
+
+  document.getElementById("copyPersonalBtn").addEventListener("click", async () => {
+    if (!lastPersonalUrl) build();
+    const ok = await copyText(lastPersonalUrl);
+    $status.textContent = ok ? "已复制个人版 URL" : "复制失败：请手动选中输出框复制";
+  });
+
+  // Build once on load with whatever is in the textarea
+  build();
+</script>
+</body>
 </html>
