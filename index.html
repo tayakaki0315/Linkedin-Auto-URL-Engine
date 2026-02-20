@@ -262,11 +262,9 @@ Archer-Daniels-Midland"></textarea>
     return names.map(n => `(text:${n},selectionType:INCLUDED)`).join(",");
   }
 
- function encodeForLinkedInQuery(s) {
-  return encodeURIComponent(s)
-    .replace(/\(/g, "%28")
-    .replace(/\)/g, "%29")
-    .replace(/,/g, "%2C");
+function encodeForLinkedInQuery(s) {
+  // LinkedIn Sales Navigator 的 query 需要保留括号，但逗号必须编码成 %2C
+  return encodeURIComponent(s).replace(/,/g, "%2C");
 }
 
 function buildSNUrl({ mode, names, sessionId }) {
