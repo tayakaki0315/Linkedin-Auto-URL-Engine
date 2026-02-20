@@ -1,101 +1,232 @@
 <!doctype html>
-<html lang="zh">
+<html lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sales Navigator Company URL Builder (Team Share)</title>
+  <title>Sales Navigator 会社URLビルダー</title>
   <style>
-    body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans","Noto Sans CJK JP",sans-serif;
-           margin: 24px; line-height: 1.4; }
-    .row { display: flex; gap: 16px; flex-wrap: wrap; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; max-width: 980px; }
-    textarea { width: 100%; min-height: 180px; font-size: 14px; padding: 10px; }
-    input[type="text"] { width: 100%; font-size: 14px; padding: 10px; }
-    select, button { font-size: 14px; padding: 10px 12px; }
-    .muted { color: #666; font-size: 12px; }
-    .out { width: 100%; min-height: 110px; font-size: 12px; padding: 10px; }
-    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;}
-    .ok { color: #0a7; font-weight: 600; }
-    .warn { color: #c60; font-weight: 600; }
-    code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
-    .small { font-size: 12px; }
-    .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }
+    :root{
+      --bg:#0b0c10;
+      --card:#111319;
+      --card2:#0f1117;
+      --text:#e9ecf1;
+      --muted:#a8b0bd;
+      --line:#222635;
+      --accent:#7aa2ff;
+      --accent2:#7ef0c1;
+      --warn:#ffcc66;
+      --danger:#ff6b6b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7fb; --card:#ffffff; --card2:#fbfbfe; --text:#111827; --muted:#5b6472;
+        --line:#e5e7ef; --accent:#2f5eff; --accent2:#0ea5e9; --warn:#b45309; --danger:#dc2626;
+        --shadow: 0 12px 26px rgba(17,24,39,.08);
+      }
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:28px;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;
+      background:var(--bg); color:var(--text);
+      line-height:1.45;
+    }
+    .wrap{max-width:1100px;margin:0 auto}
+    .top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    h1{font-size:20px;margin:0 0 6px 0;letter-spacing:.2px}
+    .subtitle{color:var(--muted); font-size:12.5px; margin:0}
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--line); background:var(--card2);
+      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px;
+    }
+    .grid{display:grid; grid-template-columns: 1.3fr .7fr; gap:16px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      padding:16px; box-shadow:var(--shadow);
+    }
+    .card h2{
+      font-size:14px; margin:0 0 10px 0; letter-spacing:.2px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .hint{color:var(--muted); font-size:12px; margin-top:6px}
+    textarea, input, select{
+      width:100%;
+      background:transparent;
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:210px; resize:vertical}
+    select{cursor:pointer}
+    .row{display:grid; grid-template-columns:1fr; gap:10px}
+    .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 540px){ .two{grid-template-columns:1fr} }
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    button.primary{
+      border-color: rgba(122,162,255,.35);
+      background:linear-gradient(180deg, rgba(122,162,255,.28), rgba(122,162,255,.10));
+    }
+    button.ghost{
+      background:transparent;
+    }
+    button:active{transform:translateY(1px)}
+    .status{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .ok{color:var(--accent2); font-weight:600}
+    .warn{color:var(--warn); font-weight:600}
+    .danger{color:var(--danger); font-weight:600}
+
+    .out{min-height:150px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-size:12px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .splitOut{display:grid; grid-template-columns:1fr; gap:10px}
+
+    details{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background:var(--card2);
+    }
+    summary{cursor:pointer; color:var(--text); font-size:13px}
+    .small{font-size:12px;color:var(--muted);margin-top:6px}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
   </style>
 </head>
 <body>
-  <h2>Sales Navigator Company URL Builder <span class="pill">Team Share</span></h2>
-  <p class="muted">
-    输入公司名（每行一个）。选择筛选模式（former/current/both），一键生成：
-    <span class="ok">团队共享版 URL（不含 sessionId）</span> + <span class="warn">个人版 URL（含 sessionId，可选）</span>。
-  </p>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Sales Navigator 会社URLビルダー</h1>
+      <p class="subtitle">
+        会社名を貼り付け → former/current/both を選択 → <span class="ok">共有URL（sessionIdなし）</span> と
+        <span class="warn">個人URL（sessionIdあり・任意）</span> を自動生成します。
+      </p>
+    </div>
+    <div class="badge">
+      <span>Team Share</span>
+      <span class="mono">no sessionId</span>
+    </div>
+  </div>
 
-  <div class="card">
-    <div class="row">
-      <div style="flex: 2 1 520px;">
-        <label><b>公司名单（每行一个，日文/英文都可以）</b></label>
-        <textarea id="companies" placeholder="例如：
+  <div class="grid">
+    <div class="card">
+      <h2>
+        <span>入力</span>
+        <span class="pill"><span class="ok">自動補完</span>＋別名展開</span>
+      </h2>
+
+      <label><b>会社名（1行＝1社）</b></label>
+      <textarea id="companies" placeholder="例：
 高砂香料工業
 長谷川香料
 International Flavors & Fragrances
-Archer-Daniels-Midland
-"></textarea>
-        <div class="muted small">
-          支持你之前的“JP一行/EN一行”的格式：网页会自动当作两行两家公司处理（不会合并），你也可以只给一行。
+Archer-Daniels-Midland"></textarea>
+      <div class="hint">
+        日/英どちらでもOK。必要に応じて「株式会社/Co.,Ltd」削除版、公式英名、略称（ADM / IFF など）を自動追加します。
+      </div>
+
+      <div style="height:12px;"></div>
+
+      <div class="two">
+        <div class="row">
+          <label><b>モード</b></label>
+          <select id="mode">
+            <option value="PAST">former only（PAST_COMPANY）</option>
+            <option value="CURRENT">current only（CURRENT_COMPANY）</option>
+            <option value="BOTH">both（CURRENT + PAST）</option>
+          </select>
+        </div>
+        <div class="row">
+          <label><b>自動補完（辞書）</b></label>
+          <select id="dictMode">
+            <option value="ON" selected>ON（推奨）</option>
+            <option value="OFF">OFF（入力のみ）</option>
+          </select>
         </div>
       </div>
 
-      <div style="flex: 1 1 260px;">
-        <label><b>筛选模式</b></label>
-        <select id="mode" style="width:100%;">
-          <option value="PAST">former only (PAST_COMPANY)</option>
-          <option value="CURRENT">current only (CURRENT_COMPANY)</option>
-          <option value="BOTH">both (CURRENT + PAST)</option>
-        </select>
+      <div style="height:10px;"></div>
 
-        <div style="height:12px;"></div>
-
-        <label><b>你的 sessionId（可选）</b></label>
-        <input id="sessionId" type="text" placeholder="例如 uxiEiZxoT3uEC+7v3ul6vQ==" />
-        <div class="muted small">
-          留空也没问题：你会得到团队共享版（不含 sessionId）的 URL。
-          只有你想生成“个人版”时再填。
+      <details>
+        <summary><b>高度な設定（任意）</b>：個人URL用 sessionId</summary>
+        <div style="height:8px;"></div>
+        <label><b>sessionId（空欄OK）</b></label>
+        <input id="sessionId" type="text" placeholder="例：uxiEiZxoT3uEC+7v3ul6vQ==" />
+        <div class="small">
+          共有URLは sessionId なしで生成されるため、チーム共有に最適です。個人URLだけ sessionId を付与できます。
         </div>
+      </details>
 
-        <div style="height:12px;"></div>
+      <div class="btns">
+        <button class="primary" id="buildBtn">URLを生成</button>
+        <button id="copyTeamBtn">共有URLをコピー</button>
+        <button id="openTeamBtn" class="ghost">共有URLを開く</button>
+        <button id="copyPersonalBtn">個人URLをコピー</button>
+        <button id="openPersonalBtn" class="ghost">個人URLを開く</button>
+      </div>
 
-        <label><b>自动补全（别名字典）</b></label>
-        <select id="dictMode" style="width:100%;">
-          <option value="ON" selected>ON（推荐）</option>
-          <option value="OFF">OFF（只用原始输入）</option>
-        </select>
+      <div id="status" class="status"></div>
+    </div>
 
-        <div class="btns">
-          <button id="buildBtn">生成 URL</button>
-          <button id="copyTeamBtn">复制团队共享版</button>
-          <button id="copyPersonalBtn">复制个人版</button>
+    <div class="card">
+      <h2><span>出力</span><span class="pill">コピーして使う</span></h2>
+      <div class="splitOut">
+        <div>
+          <label><b>生成URL（共有 / 個人）</b></label>
+          <textarea id="output" class="out" readonly></textarea>
+          <div class="hint">
+            共有URL：sessionId なし（チーム共有用）／ 個人URL：sessionId あり（任意）
+          </div>
         </div>
-
-        <div id="status" class="muted small" style="margin-top:8px;"></div>
+        <div>
+          <label><b>実際に検索へ投入する会社キーワード（展開後）</b></label>
+          <textarea id="expanded" class="out" readonly></textarea>
+          <div class="hint">
+            ここで「展開しすぎ（例：短すぎる別名）」がないか確認できます。必要なら辞書OFFに。
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="card" style="margin-top:16px;">
-    <label><b>输出（Team URL / Personal URL）</b></label>
-    <textarea id="output" class="out" readonly></textarea>
-    <div class="muted small">
-      团队共享版：不含 <code>sessionId</code>，任何同事登录 Sales Navigator 后都可用。<br/>
-      个人版：含 <code>sessionId</code>，更贴近你当前会话（可选）。
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:16px;">
-    <label><b>实际用于 query 的公司关键词（展开后）</b></label>
-    <textarea id="expanded" class="out" readonly></textarea>
-    <div class="muted small">
-      这里能看到自动补全到底加了哪些别名，方便你判断是否“过泛”。
-    </div>
-  </div>
+  <p class="subtitle" style="margin-top:14px;">
+    Tips：表示が変わらない場合は URL の末尾に <span class="mono">?v=1</span> を付けてキャッシュ回避してください。
+  </p>
+</div>
 
 <script>
   // ---------- Helpers ----------
@@ -114,28 +245,20 @@ Archer-Daniels-Midland
   }
 
   function stripKabushikiKaishaJP(name) {
-    // Remove "株式会社" if present anywhere
     return name.replace(/株式会社/g, "").trim();
   }
 
   function stripCoLtdEN(name) {
-    // Remove common suffixes: Co., Ltd. / Co.,Ltd. / Co. Ltd. / Company Limited / Ltd. / Limited
     let s = name;
     s = s.replace(/\bCo\.,?\s*Ltd\.?\b/gi, "").trim();
     s = s.replace(/\bCompany\s+Limited\b/gi, "").trim();
     s = s.replace(/\bLtd\.?\b/gi, "").trim();
     s = s.replace(/\bLimited\b/gi, "").trim();
-    // clean trailing punctuation/spaces
     s = s.replace(/[,\.\-–—\s]+$/g, "").trim();
     return s;
   }
 
-  function encodeQueryObj(queryObj) {
-    return encodeURIComponent(queryObj);
-  }
-
   function buildValuesList(names) {
-    // (text:xxx,selectionType:INCLUDED),(text:yyy,selectionType:INCLUDED)...
     return names.map(n => `(text:${n},selectionType:INCLUDED)`).join(",");
   }
 
@@ -148,12 +271,12 @@ Archer-Daniels-Midland
       filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;
     } else if (mode === "CURRENT") {
       filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;
-    } else { // BOTH
+    } else {
       filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;
     }
 
     const queryObj = `(${recent},${filters})`;
-    const base = `https://www.linkedin.com/sales/search/people?query=${encodeQueryObj(queryObj)}&viewAllFilters=true`;
+    const base = `https://www.linkedin.com/sales/search/people?query=${encodeURIComponent(queryObj)}&viewAllFilters=true`;
     if (sessionId && sessionId.trim()) {
       return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
     }
@@ -161,13 +284,15 @@ Archer-Daniels-Midland
   }
 
   // ---------- Auto expansion dictionary ----------
-  // You can extend this over time. Keys are the "canonical inputs" you type.
+  // NOTE: ここは後でどんどん増やせます（業界ごとに追加もOK）
   const EXPANSION_DICT = {
+    // 香料（例）
     "高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],
     "長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],
     "小川香料": ["Ogawa & Co., Ltd.", "Ogawa &"],
     "塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],
-    // common global abbreviations
+
+    // グローバル略称（例）
     "Archer-Daniels-Midland": ["ADM"],
     "International Flavors & Fragrances": ["IFF"]
   };
@@ -178,33 +303,33 @@ Archer-Daniels-Midland
       const n = raw.trim();
       if (!n) continue;
 
-      // Always include original
+      // original
       out.push(n);
 
-      // Default 4-variant rule (JP / EN stripping)
+      // JP stripped
       const jpStripped = stripKabushikiKaishaJP(n);
       if (jpStripped && jpStripped !== n) out.push(jpStripped);
 
+      // EN stripped
       const enStripped = stripCoLtdEN(n);
       if (enStripped && enStripped !== n) out.push(enStripped);
 
-      // Dict expansions (only when ON)
+      // dictionary expansions
       if (dictOn) {
-        // Exact match expansion
         if (EXPANSION_DICT[n]) out.push(...EXPANSION_DICT[n]);
-
-        // Also try expansion for stripped forms (useful if user inputs with 株式会社 or Co.,Ltd)
         if (EXPANSION_DICT[jpStripped]) out.push(...EXPANSION_DICT[jpStripped]);
         if (EXPANSION_DICT[enStripped]) out.push(...EXPANSION_DICT[enStripped]);
       }
     }
 
-    // Also apply strip rules to the expansions themselves (so "CO., LTD." version -> stripped version)
+    // second pass strips
     const secondPass = [];
     for (const x of out) {
       secondPass.push(x);
-      const jp = stripKabushikiKaishaJP(x); if (jp && jp !== x) secondPass.push(jp);
-      const en = stripCoLtdEN(x); if (en && en !== x) secondPass.push(en);
+      const jp = stripKabushikiKaishaJP(x);
+      if (jp && jp !== x) secondPass.push(jp);
+      const en = stripCoLtdEN(x);
+      if (en && en !== x) secondPass.push(en);
     }
 
     return uniq(secondPass);
@@ -223,8 +348,12 @@ Archer-Daniels-Midland
   let lastPersonalUrl = "";
 
   function parseCompanies(text) {
-    // Each non-empty line is one "input token"
     return text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  }
+
+  function setStatus(msg, kind) {
+    const cls = kind === "ok" ? "ok" : (kind === "warn" ? "warn" : (kind === "danger" ? "danger" : ""));
+    $status.innerHTML = `<span class="${cls}">${msg}</span>`;
   }
 
   function build() {
@@ -233,24 +362,24 @@ Archer-Daniels-Midland
     const dictOn = ($dictMode.value === "ON");
     const expanded = expandNames(input, dictOn);
 
-    // Team URL: no sessionId
     lastTeamUrl = buildSNUrl({ mode, names: expanded, sessionId: "" });
-
-    // Personal URL: with sessionId if provided
     lastPersonalUrl = buildSNUrl({ mode, names: expanded, sessionId: $sessionId.value });
 
     $output.value =
-`[Team Share URL - no sessionId]
+`[共有URL（sessionIdなし）]
 ${lastTeamUrl}
 
-[Personal URL - with sessionId (optional)]
+[個人URL（sessionIdあり・任意）]
 ${lastPersonalUrl}`;
 
     $expanded.value = expanded.join("\n");
 
     const approxLen = lastTeamUrl.length;
-    const warn = approxLen > 7000 ? "（⚠️ 可能过长，若打开异常建议减少公司数或关闭字典）" : "";
-    $status.textContent = `已生成：公司关键词 ${expanded.length} 个；Team URL 长度 ${approxLen}${warn}`;
+    if (approxLen > 7000) {
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${approxLen}（長すぎる可能性あり。会社数を減らすか辞書OFF推奨）`, "warn");
+    } else {
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${approxLen}`, "ok");
+    }
   }
 
   async function copyText(text) {
@@ -262,21 +391,29 @@ ${lastPersonalUrl}`;
     }
   }
 
+  function openUrl(url) {
+    if (!url) build();
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
   document.getElementById("buildBtn").addEventListener("click", build);
 
   document.getElementById("copyTeamBtn").addEventListener("click", async () => {
     if (!lastTeamUrl) build();
     const ok = await copyText(lastTeamUrl);
-    $status.textContent = ok ? "已复制团队共享版 URL" : "复制失败：请手动选中输出框复制";
+    setStatus(ok ? "共有URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "ok" : "danger");
   });
 
   document.getElementById("copyPersonalBtn").addEventListener("click", async () => {
     if (!lastPersonalUrl) build();
     const ok = await copyText(lastPersonalUrl);
-    $status.textContent = ok ? "已复制个人版 URL" : "复制失败：请手动选中输出框复制";
+    setStatus(ok ? "個人URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "ok" : "danger");
   });
 
-  // Build once on load with whatever is in the textarea
+  document.getElementById("openTeamBtn").addEventListener("click", () => openUrl(lastTeamUrl));
+  document.getElementById("openPersonalBtn").addEventListener("click", () => openUrl(lastPersonalUrl));
+
+  // 初期生成
   build();
 </script>
 </body>
