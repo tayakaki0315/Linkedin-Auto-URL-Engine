@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -27,8 +27,6 @@
     .top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
     h1{margin:0 0 6px 0;font-size:20px;letter-spacing:.2px}
     .sub{margin:0;color:var(--muted);font-size:12.5px}
-    .badge{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--card2);
-      padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
     .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
     @media(max-width:980px){.grid{grid-template-columns:1fr}}
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
@@ -68,49 +66,46 @@
 <div class="wrap">
   <div class="top">
     <div>
-      <h1>Taya Navi <span class="mono">v2</span></h1>
+      <h1>Taya Navi <span class="mono">v2.1</span></h1>
       <p class="sub">
-        会社名を貼り付け → former/current/both → <span class="good">共有URL（sessionIdなし）</span> を生成。<br/>
-        ※ former only の場合は自動で <span class="mono">CURRENT_COMPANY=EXCLUDED</span> を追加し、「現職が該当会社」の人を除外します。
+        Paste company names → choose mode → generate a <span class="good">shared URL (no sessionId)</span> for Sales Navigator. <br/>
+        <b>Former only</b> automatically adds <span class="mono">CURRENT_COMPANY=EXCLUDED</span> to exclude people currently at those companies.
       </p>
     </div>
-    <div class="badge"><span>Team Share</span><span class="mono">no sessionId</span></div>
   </div>
 
   <div class="grid">
     <div class="card">
       <h2>
-        <span>入力</span>
-        <span class="pill"><span class="good">安定 v2</span>（二重エンコード＋長さ監視＋分割）</span>
+        <span>Input</span>
+        <span class="pill"><span class="good">Stable</span> double-encode + length guard + split</span>
       </h2>
 
-      <label><b>会社名（1行＝1社）</b></label>
-      <textarea id="companies" placeholder="例：
-高砂香料工業
-長谷川香料
-Milliken (Westex)
-International Flavors & Fragrances
-Archer-Daniels-Midland"></textarea>
+      <label><b>Company names</b></label>
+      <textarea id="companies" placeholder="Examples (any delimiter works):
+Takasago / T. Hasegawa, IFF; ADM
+高砂香料工業、長谷川香料
+Milliken (Westex)・Glen Raven"></textarea>
       <div class="hint">
-        日/英どちらでもOK。必要に応じて「株式会社/Co.,Ltd」削除版、公式英名、略称（ADM/IFF 等）を自動追加できます。
+        Auto-splits by: comma <span class="mono">,</span> / Chinese comma <span class="mono">，</span> / Japanese <span class="mono">、</span> / colon <span class="mono">:</span> <span class="mono">：</span> / middle dot <span class="mono">・</span> / slash <span class="mono">/</span> <span class="mono">\</span> / semicolon <span class="mono">;</span> <span class="mono">；</span> / newline.
       </div>
 
       <div style="height:12px;"></div>
 
       <div class="two">
         <div class="row">
-          <label><b>モード</b></label>
+          <label><b>Mode</b></label>
           <select id="mode">
-            <option value="PAST">former only（PAST_COMPANY） + 現職除外</option>
-            <option value="CURRENT">current only（CURRENT_COMPANY）</option>
-            <option value="BOTH">both（CURRENT + PAST）</option>
+            <option value="PAST">Former only (PAST included + CURRENT excluded)</option>
+            <option value="CURRENT">Current only</option>
+            <option value="BOTH">Both (CURRENT + PAST)</option>
           </select>
         </div>
         <div class="row">
-          <label><b>自動補完（辞書）</b></label>
+          <label><b>Auto expansion (dictionary)</b></label>
           <select id="dictMode">
-            <option value="ON" selected>ON（推奨）</option>
-            <option value="OFF">OFF（入力のみ）</option>
+            <option value="ON" selected>ON (recommended)</option>
+            <option value="OFF">OFF (input only)</option>
           </select>
         </div>
       </div>
@@ -118,85 +113,86 @@ Archer-Daniels-Midland"></textarea>
       <div style="height:10px;"></div>
 
       <details>
-        <summary><b>高度な設定</b>（辞書編集・分割）</summary>
+        <summary><b>Advanced</b> (industry templates, dictionary JSON, splitting)</summary>
         <div style="height:10px;"></div>
 
         <div class="two">
           <div class="row">
-            <label><b>辞書テンプレ</b></label>
+            <label><b>Industry template</b></label>
             <select id="dictTemplate">
-              <option value="flavors">香料（プリセット）</option>
-              <option value="generic" selected>汎用（最小）</option>
+              <option value="generic" selected>Generic (minimal)</option>
+              <option value="ff">Fragrance & Flavor</option>
+              <option value="dc">Data Center</option>
+              <option value="chem">Chemicals</option>
+              <option value="energy">Energy</option>
             </select>
-            <div class="hint">テンプレを選ぶと下の辞書（JSON）が上書きされます。</div>
+            <div class="hint">Selecting a template overwrites the dictionary JSON below.</div>
           </div>
 
           <div class="row">
-            <label><b>URL 自動分割</b></label>
+            <label><b>Auto split URL</b></label>
             <select id="splitMode">
-              <option value="AUTO" selected>AUTO（長すぎる場合だけ分割）</option>
-              <option value="OFF">OFF（分割しない）</option>
-              <option value="ALWAYS">ALWAYS（常に分割して短く）</option>
+              <option value="AUTO" selected>AUTO (split only when too long)</option>
+              <option value="OFF">OFF (never split)</option>
+              <option value="ALWAYS">ALWAYS (always split)</option>
             </select>
-            <div class="hint">both は長くなりやすいので AUTO 推奨。</div>
+            <div class="hint">Both-mode can get long quickly; AUTO is recommended.</div>
           </div>
         </div>
 
         <div style="height:10px;"></div>
 
         <div class="row">
-          <label><b>1URLあたり最大会社数（分割時）</b></label>
+          <label><b>Max companies per URL (when splitting)</b></label>
           <input id="chunkSize" value="22" />
-          <div class="hint">二重エンコード＋both だと長くなりやすいので、デフォルトは控えめにしています。</div>
+          <div class="hint">Double-encoding increases length; default is conservative.</div>
         </div>
 
         <div style="height:10px;"></div>
 
-        <label><b>辞書（JSON）</b>：入力→自動で追加したい別名</label>
+        <label><b>Dictionary (JSON)</b> — input → aliases to add automatically</label>
         <textarea id="dictJson" class="out" style="min-height:190px;"></textarea>
         <div class="hint">
-          形式：{"元の会社名":["追加名1","追加名2"]}。ここを増やすだけで自動補完を拡張できます。
+          Format: {"Company A":["Alias 1","Alias 2"]}. Edit here to extend offline auto-complete.
         </div>
       </details>
 
       <div class="btns">
-        <button class="primary" id="buildBtn">URLを生成</button>
-        <button id="copyTeamBtn">共有URLをコピー</button>
-        <button id="openTeamBtn" class="ghost">共有URLを開く</button>
+        <button class="primary" id="buildBtn">Generate URL</button>
+        <button id="copyTeamBtn">Copy shared URL</button>
+        <button id="openTeamBtn" class="ghost">Open shared URL</button>
       </div>
 
       <div id="status" class="status"></div>
     </div>
 
     <div class="card">
-      <h2><span>出力</span><span class="pill">共有URLのみ</span></h2>
+      <h2><span>Output</span><span class="pill">Shared URL only</span></h2>
 
-      <label><b>共有URL（sessionIdなし）</b></label>
+      <label><b>Shared URL (no sessionId)</b></label>
       <textarea id="output" class="out" readonly></textarea>
       <div class="hint">
-        URLが長すぎる場合、AUTO分割で複数URLが出ます（1本ずつ開いてください）。
+        If AUTO split triggers, multiple URLs will be listed. Open them one by one.
       </div>
 
       <div style="height:12px;"></div>
 
-      <label><b>展開後キーワード（実際に投入される会社名）</b></label>
+      <label><b>Expanded keywords (what actually gets sent)</b></label>
       <textarea id="expanded" class="out" readonly></textarea>
       <div class="hint">
-        「短すぎる別名でノイズが増える」場合は辞書OFF、または辞書から該当エントリを削除。
+        If expansions create noise, switch dictionary OFF or remove entries from the JSON.
       </div>
     </div>
   </div>
 
   <p class="sub" style="margin-top:14px;">
-    Pages 反映が遅い場合：URL末尾に <span class="mono">?v=123</span> を付けて再読み込みしてください。
+    If updates don’t show up, add <span class="mono">?v=123</span> to the URL to bypass cache.
   </p>
 </div>
 
 <script>
-  // ========= Encoding (LinkedInに合わせて安定化) =========
-  // - query構造は手動で %3A / %2C を入れて組み立てる（あなたの動く例と同じ系統）
-  // - 会社名テキストは encodeURIComponent + ( ) , を明示エンコード
-  // - さらに % を %25 に置換して「二重エンコード」風にする（%25E9... の形）
+  // ========= Encoding =========
+  // Company text: encodeURIComponent + explicit ( ) , encoding + double-encode (% -> %25)
   function encTextForCompany(name) {
     const once = encodeURIComponent(name)
       .replace(/\(/g, "%28")
@@ -205,7 +201,83 @@ Archer-Daniels-Midland"></textarea>
     return once.replace(/%/g, "%25");
   }
 
-  // ========= Utilities =========
+  // ========= Global legal suffix removal =========
+  // JP: 株式会社 有限会社 合同会社 合資会社 合名会社 （株） （有） ㈱ ㈲
+  // Global: Co., Ltd / Ltd / Limited / Inc / Corporation / LLC / PLC / AG / GmbH / S.A. / S.p.A. / B.V. / N.V. / Pty Ltd / K.K.
+  // Only remove if at the end (or surrounded by spaces/punctuation).
+  const JP_SUFFIXES = [
+    "株式会社","有限会社","合同会社","合資会社","合名会社",
+    "（株）","（有）","(株)","(有)","㈱","㈲"
+  ];
+
+  const EN_SUFFIX_PATTERNS = [
+    /,\s*co\.\s*ltd\.?$/i,
+    /\bco\.\s*ltd\.?$/i,
+    /\bco,\s*ltd\.?$/i,
+    /\bco\s*ltd\.?$/i,
+    /\bltd\.?$/i,
+    /\blimited$/i,
+    /\binc\.?$/i,
+    /\bincorporated$/i,
+    /\bcorp\.?$/i,
+    /\bcorporation$/i,
+    /\bllc\.?$/i,
+    /\bl\.l\.c\.?$/i,
+    /\bplc\.?$/i,
+    /\bag$/i,
+    /\bgmbh$/i,
+    /\bs\.a\.?$/i,
+    /\bs\.p\.a\.?$/i,
+    /\bb\.v\.?$/i,
+    /\bn\.v\.?$/i,
+    /\bpty\.?\s*ltd\.?$/i,
+    /\bk\.k\.?$/i,
+    /\bkk$/i
+  ];
+
+  // Optional: remove trailing "Holdings" / "Group" (ONLY when it is the last token)
+  const EN_TRAILING_WORDS = [/[\s,.-]+holdings$/i, /[\s,.-]+group$/i];
+
+  function stripLegalSuffixes(name) {
+    let s = (name || "").trim();
+    if (!s) return s;
+
+    // JP exact suffix tokens (end-only)
+    for (const suf of JP_SUFFIXES) {
+      if (s.endsWith(suf)) {
+        s = s.slice(0, s.length - suf.length).trim();
+      }
+    }
+
+    // Remove extra punctuation at the end before EN checks
+    s = s.replace(/[，、。．\.\s]+$/g, "").trim();
+
+    // EN patterns
+    for (const re of EN_SUFFIX_PATTERNS) {
+      s = s.replace(new RegExp(re.source, re.flags), "").trim();
+      s = s.replace(/[,\.\s]+$/g, "").trim();
+    }
+
+    // Trailing "Holdings"/"Group" (careful)
+    for (const re of EN_TRAILING_WORDS) {
+      s = s.replace(re, "").trim();
+      s = s.replace(/[,\.\s]+$/g, "").trim();
+    }
+
+    return s.trim();
+  }
+
+  // ========= Parsing: multi-delimiter split =========
+  // Split by: newline, comma, Chinese comma, Japanese comma, colon variants, middle dot, slash/backslash, semicolon variants
+  const SPLIT_RE = /[\r\n,，、:：・\/\\;；]+/g;
+
+  function parseCompanies(text) {
+    return (text || "")
+      .split(SPLIT_RE)
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
   function uniq(arr) {
     const seen = new Set();
     const out = [];
@@ -220,24 +292,6 @@ Archer-Daniels-Midland"></textarea>
     return out;
   }
 
-  function stripKabushikiKaishaJP(name) {
-    return name.replace(/株式会社/g, "").trim();
-  }
-
-  function stripCoLtdEN(name) {
-    let s = name;
-    s = s.replace(/\bCo\.,?\s*Ltd\.?\b/gi, "").trim();
-    s = s.replace(/\bCompany\s+Limited\b/gi, "").trim();
-    s = s.replace(/\bLtd\.?\b/gi, "").trim();
-    s = s.replace(/\bLimited\b/gi, "").trim();
-    s = s.replace(/[,\.\-–—\s]+$/g, "").trim();
-    return s;
-  }
-
-  function parseCompanies(text) {
-    return text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
-  }
-
   function safeInt(v, fallback) {
     const n = parseInt(String(v || "").trim(), 10);
     return Number.isFinite(n) && n > 0 ? n : fallback;
@@ -249,19 +303,50 @@ Archer-Daniels-Midland"></textarea>
     return out;
   }
 
-  // ========= Dictionary templates =========
+  // ========= Industry templates (dictionary) =========
+  // You can expand these over time; they’re offline mappings.
   const DICT_TEMPLATES = {
     generic: {
       "Archer-Daniels-Midland": ["ADM"],
       "International Flavors & Fragrances": ["IFF"]
     },
-    flavors: {
+    ff: {
       "高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],
       "長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],
       "小川香料": ["Ogawa & Co., Ltd.", "Ogawa &"],
       "塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],
       "Archer-Daniels-Midland": ["ADM"],
-      "International Flavors & Fragrances": ["IFF"]
+      "International Flavors & Fragrances": ["IFF"],
+      "DSM Firmenich": ["Firmenich", "DSM-Firmenich"]
+    },
+    dc: {
+      "NTTコミュニケーションズ": ["NTT Communications", "NTT Com", "NTT Communications Corporation"],
+      "さくらインターネット": ["Sakura Internet", "SAKURA internet"],
+      "KDDI": ["KDDI Corporation"],
+      "ソフトバンク": ["SoftBank", "SoftBank Corp."],
+      "エクイニクス": ["Equinix"],
+      "AirTrunk": ["Air Trunk"],
+      "富士通": ["Fujitsu", "Fujitsu Limited"],
+      "NEC": ["NEC Corporation"],
+      "TIS": ["TIS Inc.", "TIS"],
+      "日立製作所": ["Hitachi", "Hitachi, Ltd."]
+    },
+    chem: {
+      "BASF": ["BASF SE"],
+      "Dow": ["Dow Inc.", "The Dow Chemical Company"],
+      "Evonik": ["Evonik Industries"],
+      "三菱ケミカル": ["Mitsubishi Chemical", "Mitsubishi Chemical Group"],
+      "住友化学": ["Sumitomo Chemical"],
+      "旭化成": ["Asahi Kasei"]
+    },
+    energy: {
+      "NextEra": ["NextEra Energy"],
+      "NRG": ["NRG Energy"],
+      "Talen": ["Talen Energy"],
+      "AEP": ["American Electric Power"],
+      "Constellation": ["Constellation Energy"],
+      "PJM": ["PJM Interconnection"],
+      "FERC": ["Federal Energy Regulatory Commission"]
     }
   };
 
@@ -283,38 +368,39 @@ Archer-Daniels-Midland"></textarea>
       const n = raw.trim();
       if (!n) continue;
 
+      // Original
       out.push(n);
 
-      // 4 variants baseline
-      const jpStripped = stripKabushikiKaishaJP(n);
-      if (jpStripped && jpStripped !== n) out.push(jpStripped);
+      // Legal suffix stripped (JP + global)
+      const stripped = stripLegalSuffixes(n);
+      if (stripped && stripped !== n) out.push(stripped);
 
-      const enStripped = stripCoLtdEN(n);
-      if (enStripped && enStripped !== n) out.push(enStripped);
+      // Also attempt removing only 株式会社 quickly (legacy compatibility)
+      const jpQuick = n.replace(/株式会社/g, "").trim();
+      if (jpQuick && jpQuick !== n) out.push(jpQuick);
 
+      // Dictionary expansions
       if (dictOn && dictObj) {
         const adds = []
           .concat(dictObj[n] || [])
-          .concat(dictObj[jpStripped] || [])
-          .concat(dictObj[enStripped] || []);
+          .concat(dictObj[stripped] || [])
+          .concat(dictObj[jpQuick] || []);
         out.push(...adds);
       }
     }
 
-    // second pass stripping on added items
+    // Second pass: strip suffixes on added items too
     const second = [];
     for (const x of out) {
       second.push(x);
-      const jp = stripKabushikiKaishaJP(x);
-      if (jp && jp !== x) second.push(jp);
-      const en = stripCoLtdEN(x);
-      if (en && en !== x) second.push(en);
+      const s2 = stripLegalSuffixes(x);
+      if (s2 && s2 !== x) second.push(s2);
     }
 
     return uniq(second);
   }
 
-  // ========= Build query (working style) =========
+  // ========= Build query =========
   function buildValuesEncoded(names, selectionType) {
     return names
       .map(n => `(text%3A${encTextForCompany(n)}%2CselectionType%3A${selectionType})`)
@@ -390,14 +476,14 @@ Archer-Daniels-Midland"></textarea>
 
     const dictObj = getDictFromTextarea();
     if (dictOn && dictObj === null) {
-      setStatus("辞書（JSON）の形式が不正です。JSONを修正するか辞書OFFにしてください。", "bad");
+      setStatus("Dictionary JSON is invalid. Fix JSON or turn dictionary OFF.", "bad");
       return;
     }
 
     const expanded = expandNames(input, dictOn, dictObj || {});
     $expanded.value = expanded.join("\n");
 
-    // URL length policy (二重エンコードなので少し厳しめ)
+    // URL length policy (double encoding => stricter)
     const hardLimit = 7600;
     const warnLimit = 6200;
 
@@ -408,7 +494,7 @@ Archer-Daniels-Midland"></textarea>
       return buildSNUrl({ mode, names });
     }
 
-    // build without split first
+    // build once first
     let urls = [buildOne(expanded)];
     const len = urls[0].length;
 
@@ -425,33 +511,32 @@ Archer-Daniels-Midland"></textarea>
     // output
     const lines = [];
     if (lastTeamUrls.length === 1) {
-      lines.push("[共有URL（sessionIdなし）]");
+      lines.push("[Shared URL (no sessionId)]");
       lines.push(lastTeamUrls[0]);
     } else {
-      lines.push(`[共有URL（sessionIdなし）] ※分割：${lastTeamUrls.length}本`);
+      lines.push(`[Shared URL (no sessionId)] Split into ${lastTeamUrls.length} URLs`);
       lastTeamUrls.forEach((u, i) => lines.push(`(${i+1}) ${u}`));
     }
     $output.value = lines.join("\n");
 
     // status
     if (lastTeamUrls.length > 1) {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URLが長いため ${lastTeamUrls.length} 本に分割しました（1本ずつ開いてください）`, "good");
+      setStatus(`Done: ${expanded.length} keywords. URL too long → split into ${lastTeamUrls.length}. (Open one by one)`, "good");
       return;
     }
     if (shouldWarn) {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${len}（長め。both で失敗する場合は AUTO分割推奨）`, "warn");
+      setStatus(`Done: ${expanded.length} keywords. URL length ${len} (long). Consider AUTO split for BOTH mode.`, "warn");
     } else {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${len}`, "good");
+      setStatus(`Done: ${expanded.length} keywords. URL length ${len}.`, "good");
     }
   }
 
-  // events
   document.getElementById("buildBtn").addEventListener("click", build);
 
   document.getElementById("copyTeamBtn").addEventListener("click", async () => {
     if (!lastTeamUrls.length) build();
     const ok = await copyText(lastTeamUrls.join("\n"));
-    setStatus(ok ? "共有URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "good" : "bad");
+    setStatus(ok ? "Copied shared URL(s)." : "Copy failed. Please copy manually.", ok ? "good" : "bad");
   });
 
   document.getElementById("openTeamBtn").addEventListener("click", () => {
@@ -461,7 +546,7 @@ Archer-Daniels-Midland"></textarea>
 
   $dictTemplate.addEventListener("change", () => {
     applyTemplate();
-    setStatus("辞書テンプレを適用しました。必要に応じて JSON を編集してください。", "good");
+    setStatus("Applied industry template. You can edit the JSON further.", "good");
   });
 
   // init
