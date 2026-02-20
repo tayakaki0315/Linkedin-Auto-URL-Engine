@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Taya's Sales Navigator 企業URLビルダー v2</title>
+  <title>Taya Navi</title>
   <style>
     :root{
       --bg:#0b0c10; --card:#111319; --card2:#0f1117; --text:#e9ecf1; --muted:#a8b0bd;
@@ -61,17 +61,17 @@
     .warn{color:var(--warn);font-weight:700}
     .bad{color:var(--bad);font-weight:700}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-    .out{min-height:170px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
+    .out{min-height:190px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div>
-      <h1>Sales Navigator 会社URLビルダー <span class="mono">v2</span></h1>
+      <h1>Taya Navi <span class="mono">v2</span></h1>
       <p class="sub">
-        会社名を貼り付け → former/current/both → <span class="good">共有URL（sessionIdなし）</span> を生成。
-        必要なら <span class="warn">個人URL（sessionIdあり）</span> も生成できます。
+        会社名を貼り付け → former/current/both → <span class="good">共有URL（sessionIdなし）</span> を生成。<br/>
+        ※ former only の場合は自動で <span class="mono">CURRENT_COMPANY=EXCLUDED</span> を追加し、「現職が該当会社」の人を除外します。
       </p>
     </div>
     <div class="badge"><span>Team Share</span><span class="mono">no sessionId</span></div>
@@ -81,7 +81,7 @@
     <div class="card">
       <h2>
         <span>入力</span>
-        <span class="pill"><span class="good">安定 v2</span>（URL長監視＋分割）</span>
+        <span class="pill"><span class="good">安定 v2</span>（二重エンコード＋長さ監視＋分割）</span>
       </h2>
 
       <label><b>会社名（1行＝1社）</b></label>
@@ -101,7 +101,7 @@ Archer-Daniels-Midland"></textarea>
         <div class="row">
           <label><b>モード</b></label>
           <select id="mode">
-            <option value="PAST">former only（PAST_COMPANY）</option>
+            <option value="PAST">former only（PAST_COMPANY） + 現職除外</option>
             <option value="CURRENT">current only（CURRENT_COMPANY）</option>
             <option value="BOTH">both（CURRENT + PAST）</option>
           </select>
@@ -118,7 +118,7 @@ Archer-Daniels-Midland"></textarea>
       <div style="height:10px;"></div>
 
       <details>
-        <summary><b>高度な設定</b>（辞書編集・sessionId・分割）</summary>
+        <summary><b>高度な設定</b>（辞書編集・分割）</summary>
         <div style="height:10px;"></div>
 
         <div class="two">
@@ -132,32 +132,22 @@ Archer-Daniels-Midland"></textarea>
           </div>
 
           <div class="row">
-            <label><b>個人URL用 sessionId（任意）</b></label>
-            <input id="sessionId" placeholder="例：uxiEiZxoT3uEC+7v3ul6vQ==" />
-            <div class="hint">共有URLは sessionId なしで生成（チーム共有向け）。</div>
-          </div>
-        </div>
-
-        <div style="height:10px;"></div>
-
-        <div class="two">
-          <div class="row">
             <label><b>URL 自動分割</b></label>
             <select id="splitMode">
               <option value="AUTO" selected>AUTO（長すぎる場合だけ分割）</option>
               <option value="OFF">OFF（分割しない）</option>
               <option value="ALWAYS">ALWAYS（常に分割して短く）</option>
             </select>
-            <div class="hint">
-              both は URL が長くなりやすいので AUTO 推奨。<span class="mono">?v=1</span> でキャッシュ回避。
-            </div>
+            <div class="hint">both は長くなりやすいので AUTO 推奨。</div>
           </div>
+        </div>
 
-          <div class="row">
-            <label><b>1URLあたり最大会社数（分割時）</b></label>
-            <input id="chunkSize" value="25" />
-            <div class="hint">both の場合は実質2倍になります。大きすぎると失敗します。</div>
-          </div>
+        <div style="height:10px;"></div>
+
+        <div class="row">
+          <label><b>1URLあたり最大会社数（分割時）</b></label>
+          <input id="chunkSize" value="22" />
+          <div class="hint">二重エンコード＋both だと長くなりやすいので、デフォルトは控えめにしています。</div>
         </div>
 
         <div style="height:10px;"></div>
@@ -173,20 +163,18 @@ Archer-Daniels-Midland"></textarea>
         <button class="primary" id="buildBtn">URLを生成</button>
         <button id="copyTeamBtn">共有URLをコピー</button>
         <button id="openTeamBtn" class="ghost">共有URLを開く</button>
-        <button id="copyPersonalBtn">個人URLをコピー</button>
-        <button id="openPersonalBtn" class="ghost">個人URLを開く</button>
       </div>
 
       <div id="status" class="status"></div>
     </div>
 
     <div class="card">
-      <h2><span>出力</span><span class="pill">コピーして使う</span></h2>
+      <h2><span>出力</span><span class="pill">共有URLのみ</span></h2>
 
-      <label><b>生成URL（共有 / 個人）</b></label>
+      <label><b>共有URL（sessionIdなし）</b></label>
       <textarea id="output" class="out" readonly></textarea>
       <div class="hint">
-        URLが長すぎる場合、AUTO分割で複数URLが出ます（1つずつ開いてください）。
+        URLが長すぎる場合、AUTO分割で複数URLが出ます（1本ずつ開いてください）。
       </div>
 
       <div style="height:12px;"></div>
@@ -205,19 +193,19 @@ Archer-Daniels-Midland"></textarea>
 </div>
 
 <script>
-  // ========== Core: safe encoding strategy (match your working GPT URLs) ==========
-  // We DO NOT fully encode parentheses for the query structure.
-  // We DO encode tokens ":" and "," in the query structure as %3A and %2C,
-  // and we encode company text with encodeURIComponent + extra for "(" ")" ",".
+  // ========= Encoding (LinkedInに合わせて安定化) =========
+  // - query構造は手動で %3A / %2C を入れて組み立てる（あなたの動く例と同じ系統）
+  // - 会社名テキストは encodeURIComponent + ( ) , を明示エンコード
+  // - さらに % を %25 に置換して「二重エンコード」風にする（%25E9... の形）
   function encTextForCompany(name) {
-    // encodeURIComponent doesn't encode "(" ")" "," -> encode them to be safe
-    return encodeURIComponent(name)
+    const once = encodeURIComponent(name)
       .replace(/\(/g, "%28")
       .replace(/\)/g, "%29")
       .replace(/,/g, "%2C");
+    return once.replace(/%/g, "%25");
   }
 
-  // ========== Utilities ==========
+  // ========= Utilities =========
   function uniq(arr) {
     const seen = new Set();
     const out = [];
@@ -255,7 +243,13 @@ Archer-Daniels-Midland"></textarea>
     return Number.isFinite(n) && n > 0 ? n : fallback;
   }
 
-  // ========== Dictionary templates ==========
+  function chunkArray(arr, chunkSize) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += chunkSize) out.push(arr.slice(i, i + chunkSize));
+    return out;
+  }
+
+  // ========= Dictionary templates =========
   const DICT_TEMPLATES = {
     generic: {
       "Archer-Daniels-Midland": ["ADM"],
@@ -291,7 +285,7 @@ Archer-Daniels-Midland"></textarea>
 
       out.push(n);
 
-      // base 4 variants
+      // 4 variants baseline
       const jpStripped = stripKabushikiKaishaJP(n);
       if (jpStripped && jpStripped !== n) out.push(jpStripped);
 
@@ -307,7 +301,7 @@ Archer-Daniels-Midland"></textarea>
       }
     }
 
-    // second pass stripping for added items
+    // second pass stripping on added items
     const second = [];
     for (const x of out) {
       second.push(x);
@@ -320,50 +314,47 @@ Archer-Daniels-Midland"></textarea>
     return uniq(second);
   }
 
-  // ========== Build query in "working style" ==========
-  function buildValuesEncoded(names) {
-    // join with %2C
-    return names.map(n => `(text%3A${encTextForCompany(n)}%2CselectionType%3AINCLUDED)`).join("%2C");
+  // ========= Build query (working style) =========
+  function buildValuesEncoded(names, selectionType) {
+    return names
+      .map(n => `(text%3A${encTextForCompany(n)}%2CselectionType%3A${selectionType})`)
+      .join("%2C");
   }
 
   function buildQueryEncoded(mode, names) {
-    const values = buildValuesEncoded(names);
+    const valuesIncluded = buildValuesEncoded(names, "INCLUDED");
+    const valuesExcluded = buildValuesEncoded(names, "EXCLUDED");
 
     if (mode === "PAST") {
-      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3APAST_COMPANY%2Cvalues%3AList(${values}))))`;
+      // former only: PAST included + CURRENT excluded
+      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList(` +
+        `(type%3APAST_COMPANY%2Cvalues%3AList(${valuesIncluded}))%2C` +
+        `(type%3ACURRENT_COMPANY%2Cvalues%3AList(${valuesExcluded}))` +
+      `))`;
     }
     if (mode === "CURRENT") {
-      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3ACURRENT_COMPANY%2Cvalues%3AList(${values}))))`;
+      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList(` +
+        `(type%3ACURRENT_COMPANY%2Cvalues%3AList(${valuesIncluded}))` +
+      `))`;
     }
-    // BOTH (fixed parentheses)
-    return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3APAST_COMPANY%2Cvalues%3AList(${values}))%2C(type%3ACURRENT_COMPANY%2Cvalues%3AList(${values}))))`;
+    // BOTH: PAST included + CURRENT included
+    return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList(` +
+      `(type%3APAST_COMPANY%2Cvalues%3AList(${valuesIncluded}))%2C` +
+      `(type%3ACURRENT_COMPANY%2Cvalues%3AList(${valuesIncluded}))` +
+    `))`;
   }
 
-  function buildSNUrl({ mode, names, sessionId }) {
+  function buildSNUrl({ mode, names }) {
     const query = buildQueryEncoded(mode, names);
-    const base = `https://www.linkedin.com/sales/search/people?query=${query}&viewAllFilters=true`;
-    if (sessionId && sessionId.trim()) {
-      return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
-    }
-    return base;
+    return `https://www.linkedin.com/sales/search/people?query=${query}&viewAllFilters=true`;
   }
 
-  // ========== Split strategy ==========
-  function chunkArray(arr, chunkSize) {
-    const out = [];
-    for (let i = 0; i < arr.length; i += chunkSize) {
-      out.push(arr.slice(i, i + chunkSize));
-    }
-    return out;
-  }
-
-  // ========== UI ==========
+  // ========= UI logic =========
   const $companies = document.getElementById("companies");
   const $mode = document.getElementById("mode");
   const $dictMode = document.getElementById("dictMode");
   const $dictTemplate = document.getElementById("dictTemplate");
   const $dictJson = document.getElementById("dictJson");
-  const $sessionId = document.getElementById("sessionId");
   const $splitMode = document.getElementById("splitMode");
   const $chunkSize = document.getElementById("chunkSize");
   const $output = document.getElementById("output");
@@ -371,7 +362,6 @@ Archer-Daniels-Midland"></textarea>
   const $status = document.getElementById("status");
 
   let lastTeamUrls = [];
-  let lastPersonalUrls = [];
 
   function setStatus(text, level) {
     const cls = level === "good" ? "good" : (level === "warn" ? "warn" : "bad");
@@ -407,68 +397,55 @@ Archer-Daniels-Midland"></textarea>
     const expanded = expandNames(input, dictOn, dictObj || {});
     $expanded.value = expanded.join("\n");
 
-    const splitMode = $splitMode.value;
-    const chunkSize = safeInt($chunkSize.value, 25);
+    // URL length policy (二重エンコードなので少し厳しめ)
+    const hardLimit = 7600;
+    const warnLimit = 6200;
 
-    const hardLimit = 7800;   // practical-ish
-    const warnLimit = 6500;
+    const splitMode = $splitMode.value;
+    const chunkSize = safeInt($chunkSize.value, 22);
 
     function buildOne(names) {
-      const team = buildSNUrl({ mode, names, sessionId: "" });
-      const personal = buildSNUrl({ mode, names, sessionId: $sessionId.value });
-      return { team, personal };
+      return buildSNUrl({ mode, names });
     }
 
-    // Decide whether to split
+    // build without split first
     let urls = [buildOne(expanded)];
-    const teamLen = urls[0].team.length;
+    const len = urls[0].length;
 
-    const mustSplit = (splitMode === "ALWAYS") || (splitMode === "AUTO" && teamLen > hardLimit);
-    const shouldWarn = (teamLen > warnLimit);
+    const mustSplit = (splitMode === "ALWAYS") || (splitMode === "AUTO" && len > hardLimit);
+    const shouldWarn = (len > warnLimit);
 
     if (mustSplit) {
       const chunks = chunkArray(expanded, chunkSize);
       urls = chunks.map(c => buildOne(c));
     }
 
-    lastTeamUrls = urls.map(u => u.team);
-    lastPersonalUrls = urls.map(u => u.personal);
+    lastTeamUrls = urls;
 
-    // Output formatting
+    // output
     const lines = [];
     if (lastTeamUrls.length === 1) {
       lines.push("[共有URL（sessionIdなし）]");
       lines.push(lastTeamUrls[0]);
-      lines.push("");
-      lines.push("[個人URL（sessionIdあり・任意）]");
-      lines.push(lastPersonalUrls[0]);
     } else {
       lines.push(`[共有URL（sessionIdなし）] ※分割：${lastTeamUrls.length}本`);
-      lastTeamUrls.forEach((u, i) => {
-        lines.push(`(${i+1}) ${u}`);
-      });
-      lines.push("");
-      lines.push(`[個人URL（sessionIdあり・任意）] ※分割：${lastPersonalUrls.length}本`);
-      lastPersonalUrls.forEach((u, i) => {
-        lines.push(`(${i+1}) ${u}`);
-      });
+      lastTeamUrls.forEach((u, i) => lines.push(`(${i+1}) ${u}`));
     }
     $output.value = lines.join("\n");
 
-    // Status
+    // status
     if (lastTeamUrls.length > 1) {
       setStatus(`生成完了：キーワード ${expanded.length} 件 / URLが長いため ${lastTeamUrls.length} 本に分割しました（1本ずつ開いてください）`, "good");
       return;
     }
-
     if (shouldWarn) {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${teamLen}（長め。both で失敗する場合は AUTO分割推奨）`, "warn");
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${len}（長め。both で失敗する場合は AUTO分割推奨）`, "warn");
     } else {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${teamLen}`, "good");
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${len}`, "good");
     }
   }
 
-  // Buttons
+  // events
   document.getElementById("buildBtn").addEventListener("click", build);
 
   document.getElementById("copyTeamBtn").addEventListener("click", async () => {
@@ -477,30 +454,17 @@ Archer-Daniels-Midland"></textarea>
     setStatus(ok ? "共有URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "good" : "bad");
   });
 
-  document.getElementById("copyPersonalBtn").addEventListener("click", async () => {
-    if (!lastPersonalUrls.length) build();
-    const ok = await copyText(lastPersonalUrls.join("\n"));
-    setStatus(ok ? "個人URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "good" : "bad");
-  });
-
   document.getElementById("openTeamBtn").addEventListener("click", () => {
     if (!lastTeamUrls.length) build();
-    // Open first URL only (if split, open the first; user can open others from output)
     openUrl(lastTeamUrls[0]);
   });
 
-  document.getElementById("openPersonalBtn").addEventListener("click", () => {
-    if (!lastPersonalUrls.length) build();
-    openUrl(lastPersonalUrls[0]);
-  });
-
-  // Template change
   $dictTemplate.addEventListener("change", () => {
     applyTemplate();
     setStatus("辞書テンプレを適用しました。必要に応じて JSON を編集してください。", "good");
   });
 
-  // Init
+  // init
   applyTemplate();
   build();
 </script>
