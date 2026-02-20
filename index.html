@@ -262,26 +262,36 @@ Archer-Daniels-Midland"></textarea>
     return names.map(n => `(text:${n},selectionType:INCLUDED)`).join(",");
   }
 
-  function buildSNUrl({ mode, names, sessionId }) {
-    const values = buildValuesList(names);
-    const recent = `(recentSearchParam:(doLogHistory:true))`;
+ function encodeForLinkedInQuery(s) {
+  return encodeURIComponent(s)
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29")
+    .replace(/,/g, "%2C");
+}
 
-    let filters = "";
-    if (mode === "PAST") {
-      filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;
-    } else if (mode === "CURRENT") {
-      filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;
-    } else {
-      filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;
-    }
+function buildSNUrl({ mode, names, sessionId }) {
+  const values = buildValuesList(names);
+  const recent = `(recentSearchParam:(doLogHistory:true))`;
 
-    const queryObj = `(${recent},${filters})`;
-    const base = `https://www.linkedin.com/sales/search/people?query=${encodeURIComponent(queryObj)}&viewAllFilters=true`;
-    if (sessionId && sessionId.trim()) {
-      return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
-    }
-    return base;
+  let filters = "";
+  if (mode === "PAST") {
+    filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;
+  } else if (mode === "CURRENT") {
+    filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;
+  } else {
+    filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;
   }
+
+  const queryObj = `(${recent},${filters})`;
+
+  const encodedQuery = encodeForLinkedInQuery(queryObj);
+  const base = `https://www.linkedin.com/sales/search/people?query=${encodedQuery}&viewAllFilters=true`;
+
+  if (sessionId && sessionId.trim()) {
+    return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
+  }
+  return base;
+}
 
   // ---------- Auto expansion dictionary ----------
   // NOTE: ここは後でどんどん増やせます（業界ごとに追加もOK）
