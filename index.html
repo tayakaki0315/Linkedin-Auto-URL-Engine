@@ -3,160 +3,96 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sales Navigator 会社URLビルダー</title>
+  <title>Taya's Sales Navigator 企業URLビルダー v2</title>
   <style>
     :root{
-      --bg:#0b0c10;
-      --card:#111319;
-      --card2:#0f1117;
-      --text:#e9ecf1;
-      --muted:#a8b0bd;
-      --line:#222635;
-      --accent:#7aa2ff;
-      --accent2:#7ef0c1;
-      --warn:#ffcc66;
-      --danger:#ff6b6b;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:16px;
+      --bg:#0b0c10; --card:#111319; --card2:#0f1117; --text:#e9ecf1; --muted:#a8b0bd;
+      --line:#222635; --accent:#7aa2ff; --good:#7ef0c1; --warn:#ffcc66; --bad:#ff6b6b;
+      --shadow:0 10px 30px rgba(0,0,0,.35); --r:16px;
     }
     @media (prefers-color-scheme: light){
       :root{
-        --bg:#f6f7fb; --card:#ffffff; --card2:#fbfbfe; --text:#111827; --muted:#5b6472;
-        --line:#e5e7ef; --accent:#2f5eff; --accent2:#0ea5e9; --warn:#b45309; --danger:#dc2626;
-        --shadow: 0 12px 26px rgba(17,24,39,.08);
+        --bg:#f6f7fb; --card:#fff; --card2:#fbfbfe; --text:#111827; --muted:#5b6472;
+        --line:#e5e7ef; --accent:#2f5eff; --good:#0ea5e9; --warn:#b45309; --bad:#dc2626;
+        --shadow:0 12px 26px rgba(17,24,39,.08);
       }
     }
     *{box-sizing:border-box}
     body{
       margin:0; padding:28px;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;
-      background:var(--bg); color:var(--text);
-      line-height:1.45;
+      background:var(--bg); color:var(--text); line-height:1.45;
     }
-    .wrap{max-width:1100px;margin:0 auto}
-    .top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;
-      margin-bottom:18px;
+    .wrap{max-width:1120px;margin:0 auto}
+    .top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+    h1{margin:0 0 6px 0;font-size:20px;letter-spacing:.2px}
+    .sub{margin:0;color:var(--muted);font-size:12.5px}
+    .badge{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--card2);
+      padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+    .card h2{margin:0 0 10px 0;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+    label{display:block;margin:0 0 6px 0}
+    textarea,input,select{
+      width:100%; background:transparent; color:var(--text);
+      border:1px solid var(--line); border-radius:12px; padding:10px 12px; outline:none; font-size:13px;
     }
-    h1{font-size:20px;margin:0 0 6px 0;letter-spacing:.2px}
-    .subtitle{color:var(--muted); font-size:12.5px; margin:0}
-    .badge{
-      display:inline-flex; gap:8px; align-items:center;
-      border:1px solid var(--line); background:var(--card2);
-      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px;
-    }
-    .grid{display:grid; grid-template-columns: 1.3fr .7fr; gap:16px}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
-
-    .card{
-      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-      padding:16px; box-shadow:var(--shadow);
-    }
-    .card h2{
-      font-size:14px; margin:0 0 10px 0; letter-spacing:.2px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .hint{color:var(--muted); font-size:12px; margin-top:6px}
-    textarea, input, select{
-      width:100%;
-      background:transparent;
-      border:1px solid var(--line);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      outline:none;
-      font-size:13px;
-    }
-    textarea{min-height:210px; resize:vertical}
-    select{cursor:pointer}
-    .row{display:grid; grid-template-columns:1fr; gap:10px}
-    .two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-    @media (max-width: 540px){ .two{grid-template-columns:1fr} }
-
-    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    textarea{min-height:210px;resize:vertical}
+    .hint{color:var(--muted);font-size:12px;margin-top:6px}
+    .row{display:grid;gap:10px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:540px){.two{grid-template-columns:1fr}}
+    details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card2)}
+    summary{cursor:pointer;font-size:13px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
     button{
       border:1px solid var(--line);
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      cursor:pointer;
-      font-size:13px;
+      color:var(--text); border-radius:12px; padding:10px 12px; cursor:pointer; font-size:13px;
     }
-    button.primary{
-      border-color: rgba(122,162,255,.35);
-      background:linear-gradient(180deg, rgba(122,162,255,.28), rgba(122,162,255,.10));
-    }
-    button.ghost{
-      background:transparent;
-    }
+    button.primary{border-color:rgba(122,162,255,.35);background:linear-gradient(180deg, rgba(122,162,255,.28), rgba(122,162,255,.10))}
+    button.ghost{background:transparent}
     button:active{transform:translateY(1px)}
-    .status{
-      margin-top:10px;
-      font-size:12px;
-      color:var(--muted);
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:6px;
-      border:1px solid var(--line);
-      background:var(--card2);
-      border-radius:999px;
-      padding:4px 10px;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .ok{color:var(--accent2); font-weight:600}
-    .warn{color:var(--warn); font-weight:600}
-    .danger{color:var(--danger); font-weight:600}
-
-    .out{min-height:150px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-size:12px}
+    .status{margin-top:10px;font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--card2);
+      border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted)}
+    .good{color:var(--good);font-weight:700}
+    .warn{color:var(--warn);font-weight:700}
+    .bad{color:var(--bad);font-weight:700}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
-    .splitOut{display:grid; grid-template-columns:1fr; gap:10px}
-
-    details{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      background:var(--card2);
-    }
-    summary{cursor:pointer; color:var(--text); font-size:13px}
-    .small{font-size:12px;color:var(--muted);margin-top:6px}
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
+    .out{min-height:170px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div>
-      <h1>Sales Navigator 会社URLビルダー</h1>
-      <p class="subtitle">
-        会社名を貼り付け → former/current/both を選択 → <span class="ok">共有URL（sessionIdなし）</span> と
-        <span class="warn">個人URL（sessionIdあり・任意）</span> を自動生成します。
+      <h1>Sales Navigator 会社URLビルダー <span class="mono">v2</span></h1>
+      <p class="sub">
+        会社名を貼り付け → former/current/both → <span class="good">共有URL（sessionIdなし）</span> を生成。
+        必要なら <span class="warn">個人URL（sessionIdあり）</span> も生成できます。
       </p>
     </div>
-    <div class="badge">
-      <span>Team Share</span>
-      <span class="mono">no sessionId</span>
-    </div>
+    <div class="badge"><span>Team Share</span><span class="mono">no sessionId</span></div>
   </div>
 
   <div class="grid">
     <div class="card">
       <h2>
         <span>入力</span>
-        <span class="pill"><span class="ok">自動補完</span>＋別名展開</span>
+        <span class="pill"><span class="good">安定 v2</span>（URL長監視＋分割）</span>
       </h2>
 
       <label><b>会社名（1行＝1社）</b></label>
       <textarea id="companies" placeholder="例：
 高砂香料工業
 長谷川香料
+Milliken (Westex)
 International Flavors & Fragrances
 Archer-Daniels-Midland"></textarea>
       <div class="hint">
-        日/英どちらでもOK。必要に応じて「株式会社/Co.,Ltd」削除版、公式英名、略称（ADM / IFF など）を自動追加します。
+        日/英どちらでもOK。必要に応じて「株式会社/Co.,Ltd」削除版、公式英名、略称（ADM/IFF 等）を自動追加できます。
       </div>
 
       <div style="height:12px;"></div>
@@ -182,12 +118,54 @@ Archer-Daniels-Midland"></textarea>
       <div style="height:10px;"></div>
 
       <details>
-        <summary><b>高度な設定（任意）</b>：個人URL用 sessionId</summary>
-        <div style="height:8px;"></div>
-        <label><b>sessionId（空欄OK）</b></label>
-        <input id="sessionId" type="text" placeholder="例：uxiEiZxoT3uEC+7v3ul6vQ==" />
-        <div class="small">
-          共有URLは sessionId なしで生成されるため、チーム共有に最適です。個人URLだけ sessionId を付与できます。
+        <summary><b>高度な設定</b>（辞書編集・sessionId・分割）</summary>
+        <div style="height:10px;"></div>
+
+        <div class="two">
+          <div class="row">
+            <label><b>辞書テンプレ</b></label>
+            <select id="dictTemplate">
+              <option value="flavors">香料（プリセット）</option>
+              <option value="generic" selected>汎用（最小）</option>
+            </select>
+            <div class="hint">テンプレを選ぶと下の辞書（JSON）が上書きされます。</div>
+          </div>
+
+          <div class="row">
+            <label><b>個人URL用 sessionId（任意）</b></label>
+            <input id="sessionId" placeholder="例：uxiEiZxoT3uEC+7v3ul6vQ==" />
+            <div class="hint">共有URLは sessionId なしで生成（チーム共有向け）。</div>
+          </div>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <div class="two">
+          <div class="row">
+            <label><b>URL 自動分割</b></label>
+            <select id="splitMode">
+              <option value="AUTO" selected>AUTO（長すぎる場合だけ分割）</option>
+              <option value="OFF">OFF（分割しない）</option>
+              <option value="ALWAYS">ALWAYS（常に分割して短く）</option>
+            </select>
+            <div class="hint">
+              both は URL が長くなりやすいので AUTO 推奨。<span class="mono">?v=1</span> でキャッシュ回避。
+            </div>
+          </div>
+
+          <div class="row">
+            <label><b>1URLあたり最大会社数（分割時）</b></label>
+            <input id="chunkSize" value="25" />
+            <div class="hint">both の場合は実質2倍になります。大きすぎると失敗します。</div>
+          </div>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <label><b>辞書（JSON）</b>：入力→自動で追加したい別名</label>
+        <textarea id="dictJson" class="out" style="min-height:190px;"></textarea>
+        <div class="hint">
+          形式：{"元の会社名":["追加名1","追加名2"]}。ここを増やすだけで自動補完を拡張できます。
         </div>
       </details>
 
@@ -204,42 +182,52 @@ Archer-Daniels-Midland"></textarea>
 
     <div class="card">
       <h2><span>出力</span><span class="pill">コピーして使う</span></h2>
-      <div class="splitOut">
-        <div>
-          <label><b>生成URL（共有 / 個人）</b></label>
-          <textarea id="output" class="out" readonly></textarea>
-          <div class="hint">
-            共有URL：sessionId なし（チーム共有用）／ 個人URL：sessionId あり（任意）
-          </div>
-        </div>
-        <div>
-          <label><b>実際に検索へ投入する会社キーワード（展開後）</b></label>
-          <textarea id="expanded" class="out" readonly></textarea>
-          <div class="hint">
-            ここで「展開しすぎ（例：短すぎる別名）」がないか確認できます。必要なら辞書OFFに。
-          </div>
-        </div>
+
+      <label><b>生成URL（共有 / 個人）</b></label>
+      <textarea id="output" class="out" readonly></textarea>
+      <div class="hint">
+        URLが長すぎる場合、AUTO分割で複数URLが出ます（1つずつ開いてください）。
+      </div>
+
+      <div style="height:12px;"></div>
+
+      <label><b>展開後キーワード（実際に投入される会社名）</b></label>
+      <textarea id="expanded" class="out" readonly></textarea>
+      <div class="hint">
+        「短すぎる別名でノイズが増える」場合は辞書OFF、または辞書から該当エントリを削除。
       </div>
     </div>
   </div>
 
-  <p class="subtitle" style="margin-top:14px;">
-    Tips：表示が変わらない場合は URL の末尾に <span class="mono">?v=1</span> を付けてキャッシュ回避してください。
+  <p class="sub" style="margin-top:14px;">
+    Pages 反映が遅い場合：URL末尾に <span class="mono">?v=123</span> を付けて再読み込みしてください。
   </p>
 </div>
 
 <script>
-  // ---------- Helpers ----------
+  // ========== Core: safe encoding strategy (match your working GPT URLs) ==========
+  // We DO NOT fully encode parentheses for the query structure.
+  // We DO encode tokens ":" and "," in the query structure as %3A and %2C,
+  // and we encode company text with encodeURIComponent + extra for "(" ")" ",".
+  function encTextForCompany(name) {
+    // encodeURIComponent doesn't encode "(" ")" "," -> encode them to be safe
+    return encodeURIComponent(name)
+      .replace(/\(/g, "%28")
+      .replace(/\)/g, "%29")
+      .replace(/,/g, "%2C");
+  }
+
+  // ========== Utilities ==========
   function uniq(arr) {
     const seen = new Set();
     const out = [];
     for (const x of arr) {
-      const k = (x || "").trim();
-      if (!k) continue;
-      const key = k.toLowerCase();
+      const t = (x || "").trim();
+      if (!t) continue;
+      const key = t.toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      out.push(k);
+      out.push(t);
     }
     return out;
   }
@@ -258,170 +246,262 @@ Archer-Daniels-Midland"></textarea>
     return s;
   }
 
-  function buildValuesList(names) {
-    return names.map(n => `(text:${n},selectionType:INCLUDED)`).join(",");
+  function parseCompanies(text) {
+    return text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
   }
 
-function encodeForLinkedInQuery(s) {
-  // LinkedIn Sales Navigator 的 query 需要保留括号，但逗号必须编码成 %2C
-  return encodeURIComponent(s).replace(/,/g, "%2C");
-}
-
-function buildSNUrl({ mode, names, sessionId }) {
-  const values = buildValuesList(names);
-  const recent = `(recentSearchParam:(doLogHistory:true))`;
-
-  let filters = "";
-  if (mode === "PAST") {
-    filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;
-  } else if (mode === "CURRENT") {
-    filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;
-  } else {
-    filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;
+  function safeInt(v, fallback) {
+    const n = parseInt(String(v || "").trim(), 10);
+    return Number.isFinite(n) && n > 0 ? n : fallback;
   }
 
-  const queryObj = `(${recent},${filters})`;
-
-  const encodedQuery = encodeForLinkedInQuery(queryObj);
-  const base = `https://www.linkedin.com/sales/search/people?query=${encodedQuery}&viewAllFilters=true`;
-
-  if (sessionId && sessionId.trim()) {
-    return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
-  }
-  return base;
-}
-
-  // ---------- Auto expansion dictionary ----------
-  // NOTE: ここは後でどんどん増やせます（業界ごとに追加もOK）
-  const EXPANSION_DICT = {
-    // 香料（例）
-    "高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],
-    "長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],
-    "小川香料": ["Ogawa & Co., Ltd.", "Ogawa &"],
-    "塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],
-
-    // グローバル略称（例）
-    "Archer-Daniels-Midland": ["ADM"],
-    "International Flavors & Fragrances": ["IFF"]
+  // ========== Dictionary templates ==========
+  const DICT_TEMPLATES = {
+    generic: {
+      "Archer-Daniels-Midland": ["ADM"],
+      "International Flavors & Fragrances": ["IFF"]
+    },
+    flavors: {
+      "高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],
+      "長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],
+      "小川香料": ["Ogawa & Co., Ltd.", "Ogawa &"],
+      "塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],
+      "Archer-Daniels-Midland": ["ADM"],
+      "International Flavors & Fragrances": ["IFF"]
+    }
   };
 
-  function expandNames(inputNames, dictOn) {
+  function getDictFromTextarea() {
+    const raw = document.getElementById("dictJson").value.trim();
+    if (!raw) return {};
+    try {
+      const obj = JSON.parse(raw);
+      if (!obj || typeof obj !== "object") return {};
+      return obj;
+    } catch (e) {
+      return null; // invalid JSON
+    }
+  }
+
+  function expandNames(inputNames, dictOn, dictObj) {
     let out = [];
     for (const raw of inputNames) {
       const n = raw.trim();
       if (!n) continue;
 
-      // original
       out.push(n);
 
-      // JP stripped
+      // base 4 variants
       const jpStripped = stripKabushikiKaishaJP(n);
       if (jpStripped && jpStripped !== n) out.push(jpStripped);
 
-      // EN stripped
       const enStripped = stripCoLtdEN(n);
       if (enStripped && enStripped !== n) out.push(enStripped);
 
-      // dictionary expansions
-      if (dictOn) {
-        if (EXPANSION_DICT[n]) out.push(...EXPANSION_DICT[n]);
-        if (EXPANSION_DICT[jpStripped]) out.push(...EXPANSION_DICT[jpStripped]);
-        if (EXPANSION_DICT[enStripped]) out.push(...EXPANSION_DICT[enStripped]);
+      if (dictOn && dictObj) {
+        const adds = []
+          .concat(dictObj[n] || [])
+          .concat(dictObj[jpStripped] || [])
+          .concat(dictObj[enStripped] || []);
+        out.push(...adds);
       }
     }
 
-    // second pass strips
-    const secondPass = [];
+    // second pass stripping for added items
+    const second = [];
     for (const x of out) {
-      secondPass.push(x);
+      second.push(x);
       const jp = stripKabushikiKaishaJP(x);
-      if (jp && jp !== x) secondPass.push(jp);
+      if (jp && jp !== x) second.push(jp);
       const en = stripCoLtdEN(x);
-      if (en && en !== x) secondPass.push(en);
+      if (en && en !== x) second.push(en);
     }
 
-    return uniq(secondPass);
+    return uniq(second);
   }
 
-  // ---------- UI ----------
+  // ========== Build query in "working style" ==========
+  function buildValuesEncoded(names) {
+    // join with %2C
+    return names.map(n => `(text%3A${encTextForCompany(n)}%2CselectionType%3AINCLUDED)`).join("%2C");
+  }
+
+  function buildQueryEncoded(mode, names) {
+    const values = buildValuesEncoded(names);
+
+    if (mode === "PAST") {
+      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3APAST_COMPANY%2Cvalues%3AList(${values}))))`;
+    }
+    if (mode === "CURRENT") {
+      return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3ACURRENT_COMPANY%2Cvalues%3AList(${values}))))`;
+    }
+    // BOTH (fixed parentheses)
+    return `(recentSearchParam%3A(doLogHistory%3Atrue)%2Cfilters%3AList((type%3APAST_COMPANY%2Cvalues%3AList(${values}))%2C(type%3ACURRENT_COMPANY%2Cvalues%3AList(${values}))))`;
+  }
+
+  function buildSNUrl({ mode, names, sessionId }) {
+    const query = buildQueryEncoded(mode, names);
+    const base = `https://www.linkedin.com/sales/search/people?query=${query}&viewAllFilters=true`;
+    if (sessionId && sessionId.trim()) {
+      return `${base}&sessionId=${encodeURIComponent(sessionId.trim())}`;
+    }
+    return base;
+  }
+
+  // ========== Split strategy ==========
+  function chunkArray(arr, chunkSize) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      out.push(arr.slice(i, i + chunkSize));
+    }
+    return out;
+  }
+
+  // ========== UI ==========
   const $companies = document.getElementById("companies");
   const $mode = document.getElementById("mode");
-  const $sessionId = document.getElementById("sessionId");
   const $dictMode = document.getElementById("dictMode");
+  const $dictTemplate = document.getElementById("dictTemplate");
+  const $dictJson = document.getElementById("dictJson");
+  const $sessionId = document.getElementById("sessionId");
+  const $splitMode = document.getElementById("splitMode");
+  const $chunkSize = document.getElementById("chunkSize");
   const $output = document.getElementById("output");
   const $expanded = document.getElementById("expanded");
   const $status = document.getElementById("status");
 
-  let lastTeamUrl = "";
-  let lastPersonalUrl = "";
+  let lastTeamUrls = [];
+  let lastPersonalUrls = [];
 
-  function parseCompanies(text) {
-    return text.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  function setStatus(text, level) {
+    const cls = level === "good" ? "good" : (level === "warn" ? "warn" : "bad");
+    $status.innerHTML = `<span class="${cls}">${text}</span>`;
   }
 
-  function setStatus(msg, kind) {
-    const cls = kind === "ok" ? "ok" : (kind === "warn" ? "warn" : (kind === "danger" ? "danger" : ""));
-    $status.innerHTML = `<span class="${cls}">${msg}</span>`;
+  function applyTemplate() {
+    const key = $dictTemplate.value;
+    const obj = DICT_TEMPLATES[key] || DICT_TEMPLATES.generic;
+    $dictJson.value = JSON.stringify(obj, null, 2);
+  }
+
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch { return false; }
+  }
+
+  function openUrl(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 
   function build() {
     const input = parseCompanies($companies.value);
     const mode = $mode.value;
     const dictOn = ($dictMode.value === "ON");
-    const expanded = expandNames(input, dictOn);
 
-    lastTeamUrl = buildSNUrl({ mode, names: expanded, sessionId: "" });
-    lastPersonalUrl = buildSNUrl({ mode, names: expanded, sessionId: $sessionId.value });
+    const dictObj = getDictFromTextarea();
+    if (dictOn && dictObj === null) {
+      setStatus("辞書（JSON）の形式が不正です。JSONを修正するか辞書OFFにしてください。", "bad");
+      return;
+    }
 
-    $output.value =
-`[共有URL（sessionIdなし）]
-${lastTeamUrl}
-
-[個人URL（sessionIdあり・任意）]
-${lastPersonalUrl}`;
-
+    const expanded = expandNames(input, dictOn, dictObj || {});
     $expanded.value = expanded.join("\n");
 
-    const approxLen = lastTeamUrl.length;
-    if (approxLen > 7000) {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${approxLen}（長すぎる可能性あり。会社数を減らすか辞書OFF推奨）`, "warn");
+    const splitMode = $splitMode.value;
+    const chunkSize = safeInt($chunkSize.value, 25);
+
+    const hardLimit = 7800;   // practical-ish
+    const warnLimit = 6500;
+
+    function buildOne(names) {
+      const team = buildSNUrl({ mode, names, sessionId: "" });
+      const personal = buildSNUrl({ mode, names, sessionId: $sessionId.value });
+      return { team, personal };
+    }
+
+    // Decide whether to split
+    let urls = [buildOne(expanded)];
+    const teamLen = urls[0].team.length;
+
+    const mustSplit = (splitMode === "ALWAYS") || (splitMode === "AUTO" && teamLen > hardLimit);
+    const shouldWarn = (teamLen > warnLimit);
+
+    if (mustSplit) {
+      const chunks = chunkArray(expanded, chunkSize);
+      urls = chunks.map(c => buildOne(c));
+    }
+
+    lastTeamUrls = urls.map(u => u.team);
+    lastPersonalUrls = urls.map(u => u.personal);
+
+    // Output formatting
+    const lines = [];
+    if (lastTeamUrls.length === 1) {
+      lines.push("[共有URL（sessionIdなし）]");
+      lines.push(lastTeamUrls[0]);
+      lines.push("");
+      lines.push("[個人URL（sessionIdあり・任意）]");
+      lines.push(lastPersonalUrls[0]);
     } else {
-      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${approxLen}`, "ok");
+      lines.push(`[共有URL（sessionIdなし）] ※分割：${lastTeamUrls.length}本`);
+      lastTeamUrls.forEach((u, i) => {
+        lines.push(`(${i+1}) ${u}`);
+      });
+      lines.push("");
+      lines.push(`[個人URL（sessionIdあり・任意）] ※分割：${lastPersonalUrls.length}本`);
+      lastPersonalUrls.forEach((u, i) => {
+        lines.push(`(${i+1}) ${u}`);
+      });
+    }
+    $output.value = lines.join("\n");
+
+    // Status
+    if (lastTeamUrls.length > 1) {
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URLが長いため ${lastTeamUrls.length} 本に分割しました（1本ずつ開いてください）`, "good");
+      return;
+    }
+
+    if (shouldWarn) {
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${teamLen}（長め。both で失敗する場合は AUTO分割推奨）`, "warn");
+    } else {
+      setStatus(`生成完了：キーワード ${expanded.length} 件 / URL長 ${teamLen}`, "good");
     }
   }
 
-  async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function openUrl(url) {
-    if (!url) build();
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
-
+  // Buttons
   document.getElementById("buildBtn").addEventListener("click", build);
 
   document.getElementById("copyTeamBtn").addEventListener("click", async () => {
-    if (!lastTeamUrl) build();
-    const ok = await copyText(lastTeamUrl);
-    setStatus(ok ? "共有URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "ok" : "danger");
+    if (!lastTeamUrls.length) build();
+    const ok = await copyText(lastTeamUrls.join("\n"));
+    setStatus(ok ? "共有URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "good" : "bad");
   });
 
   document.getElementById("copyPersonalBtn").addEventListener("click", async () => {
-    if (!lastPersonalUrl) build();
-    const ok = await copyText(lastPersonalUrl);
-    setStatus(ok ? "個人URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "ok" : "danger");
+    if (!lastPersonalUrls.length) build();
+    const ok = await copyText(lastPersonalUrls.join("\n"));
+    setStatus(ok ? "個人URLをコピーしました" : "コピーに失敗しました（手動でコピーしてください）", ok ? "good" : "bad");
   });
 
-  document.getElementById("openTeamBtn").addEventListener("click", () => openUrl(lastTeamUrl));
-  document.getElementById("openPersonalBtn").addEventListener("click", () => openUrl(lastPersonalUrl));
+  document.getElementById("openTeamBtn").addEventListener("click", () => {
+    if (!lastTeamUrls.length) build();
+    // Open first URL only (if split, open the first; user can open others from output)
+    openUrl(lastTeamUrls[0]);
+  });
 
-  // 初期生成
+  document.getElementById("openPersonalBtn").addEventListener("click", () => {
+    if (!lastPersonalUrls.length) build();
+    openUrl(lastPersonalUrls[0]);
+  });
+
+  // Template change
+  $dictTemplate.addEventListener("change", () => {
+    applyTemplate();
+    setStatus("辞書テンプレを適用しました。必要に応じて JSON を編集してください。", "good");
+  });
+
+  // Init
+  applyTemplate();
   build();
 </script>
 </body>
