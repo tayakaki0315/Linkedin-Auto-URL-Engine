@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!doctype html&gt;</p>
+<p class="p1">&lt;html lang="zh"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Sales Navigator Company URL Builder (Team Share)&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,"PingFang SC","Hiragino Sans","Noto Sans CJK JP",sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">           </span>margin: 24px; line-height: 1.4; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.row { display: flex; gap: 16px; flex-wrap: wrap; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; max-width: 980px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>textarea { width: 100%; min-height: 180px; font-size: 14px; padding: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>input[type="text"] { width: 100%; font-size: 14px; padding: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>select, button { font-size: 14px; padding: 10px 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.muted { color: #666; font-size: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.out { width: 100%; min-height: 110px; font-size: 12px; padding: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.ok { color: #0a7; font-weight: 600; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.warn { color: #c60; font-weight: 600; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.small { font-size: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.pill { display: inline-block; padding: 2px 8px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h2&gt;Sales Navigator Company URL Builder &lt;span class="pill"&gt;Team Share&lt;/span&gt;&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p class="muted"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>输入公司名（每行一个）。选择筛选模式（former/current/both），一键生成：</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="ok"&gt;团队共享版 URL（不含 sessionId）&lt;/span&gt; + &lt;span class="warn"&gt;个人版 URL（含 sessionId，可选）&lt;/span&gt;。</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="flex: 2 1 520px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label&gt;&lt;b&gt;公司名单（每行一个，日文/英文都可以）&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="companies" placeholder="例如：</p>
+<p class="p1">高砂香料工業</p>
+<p class="p1">長谷川香料</p>
+<p class="p1">International Flavors &amp; Fragrances</p>
+<p class="p1">Archer-Daniels-Midland</p>
+<p class="p1">"&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="muted small"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>支持你之前的“JP一行/EN一行”的格式：网页会自动当作两行两家公司处理（不会合并），你也可以只给一行。</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="flex: 1 1 260px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label&gt;&lt;b&gt;筛选模式&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;select id="mode" style="width:100%;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;option value="PAST"&gt;former only (PAST_COMPANY)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;option value="CURRENT"&gt;current only (CURRENT_COMPANY)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;option value="BOTH"&gt;both (CURRENT + PAST)&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="height:12px;"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label&gt;&lt;b&gt;你的 sessionId（可选）&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="sessionId" type="text" placeholder="例如 uxiEiZxoT3uEC+7v3ul6vQ==" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="muted small"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>留空也没问题：你会得到团队共享版（不含 sessionId）的 URL。</p>
+<p class="p1"><span class="Apple-converted-space">          </span>只有你想生成“个人版”时再填。</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="height:12px;"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label&gt;&lt;b&gt;自动补全（别名字典）&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;select id="dictMode" style="width:100%;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;option value="ON" selected&gt;ON（推荐）&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;option value="OFF"&gt;OFF（只用原始输入）&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="btns"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button id="buildBtn"&gt;生成 URL&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button id="copyTeamBtn"&gt;复制团队共享版&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button id="copyPersonalBtn"&gt;复制个人版&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="status" class="muted small" style="margin-top:8px;"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card" style="margin-top:16px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label&gt;&lt;b&gt;输出（Team URL / Personal URL）&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;textarea id="output" class="out" readonly&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="muted small"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>团队共享版：不含 &lt;code&gt;sessionId&lt;/code&gt;，任何同事登录 Sales Navigator 后都可用。&lt;br/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>个人版：含 &lt;code&gt;sessionId&lt;/code&gt;，更贴近你当前会话（可选）。</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card" style="margin-top:16px;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label&gt;&lt;b&gt;实际用于 query 的公司关键词（展开后）&lt;/b&gt;&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;textarea id="expanded" class="out" readonly&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="muted small"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>这里能看到自动补全到底加了哪些别名，方便你判断是否“过泛”。</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Helpers ----------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>function uniq(arr) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const seen = new Set();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const out = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const x of arr) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const k = (x || "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!k) continue;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const key = k.toLowerCase();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (seen.has(key)) continue;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>seen.add(key);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>out.push(k);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return out;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function stripKabushikiKaishaJP(name) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Remove "株式会社" if present anywhere</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return name.replace(/株式会社/g, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function stripCoLtdEN(name) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Remove common suffixes: Co., Ltd. / Co.,Ltd. / Co. Ltd. / Company Limited / Ltd. / Limited</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let s = name;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s = s.replace(/\bCo\.,?\s*Ltd\.?\b/gi, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s = s.replace(/\bCompany\s+Limited\b/gi, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s = s.replace(/\bLtd\.?\b/gi, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s = s.replace(/\bLimited\b/gi, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// clean trailing punctuation/spaces</p>
+<p class="p1"><span class="Apple-converted-space">    </span>s = s.replace(/[,\.\-–—\s]+$/g, "").trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function encodeQueryObj(queryObj) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return encodeURIComponent(queryObj);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function buildValuesList(names) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// (text:xxx,selectionType:INCLUDED),(text:yyy,selectionType:INCLUDED)...</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return names.map(n =&gt; `(text:${n},selectionType:INCLUDED)`).join(",");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function buildSNUrl({ mode, names, sessionId }) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const values = buildValuesList(names);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const recent = `(recentSearchParam:(doLogHistory:true))`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let filters = "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (mode === "PAST") {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>filters = `filters:List((type:PAST_COMPANY,values:List(${values})))`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else if (mode === "CURRENT") {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>filters = `filters:List((type:CURRENT_COMPANY,values:List(${values})))`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else { // BOTH</p>
+<p class="p1"><span class="Apple-converted-space">      </span>filters = `filters:List((type:PAST_COMPANY,values:List(${values})),(type:CURRENT_COMPANY,values:List(${values})))`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const queryObj = `(${recent},${filters})`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const base = `https://www.linkedin.com/sales/search/people?query=${encodeQueryObj(queryObj)}&amp;viewAllFilters=true`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (sessionId &amp;&amp; sessionId.trim()) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return `${base}&amp;sessionId=${encodeURIComponent(sessionId.trim())}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return base;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ---------- Auto expansion dictionary ----------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// You can extend this over time. Keys are the "canonical inputs" you type.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const EXPANSION_DICT = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"高砂香料工業": ["TAKASAGO INTERNATIONAL CORPORATION", "TAKASAGO INTERNATIONAL"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"長谷川香料": ["T. HASEGAWA CO., LTD.", "T. HASEGAWA"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"小川香料": ["Ogawa &amp; Co., Ltd.", "Ogawa &amp;"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"塩野香料": ["SHIONO KORYO KAISHA, LTD", "SHIONO KORYO KAISHA"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// common global abbreviations</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Archer-Daniels-Midland": ["ADM"],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"International Flavors &amp; Fragrances": ["IFF"]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function expandNames(inputNames, dictOn) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let out = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const raw of inputNames) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const n = raw.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!n) continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Always include original</p>
+<p class="p1"><span class="Apple-converted-space">      </span>out.push(n);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Default 4-variant rule (JP / EN stripping)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const jpStripped = stripKabushikiKaishaJP(n);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (jpStripped &amp;&amp; jpStripped !== n) out.push(jpStripped);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const enStripped = stripCoLtdEN(n);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (enStripped &amp;&amp; enStripped !== n) out.push(enStripped);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Dict expansions (only when ON)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (dictOn) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Exact match expansion</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (EXPANSION_DICT[n]) out.push(...EXPANSION_DICT[n]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Also try expansion for stripped forms (useful if user inputs with 株式会社 or Co.,Ltd)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (EXPANSION_DICT[jpStripped]) out.push(...EXPANSION_DICT[jpStripped]);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (EXPANSION_DICT[enStripped]) out.push(...EXPANSION_DICT[enStripped]);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Also apply strip rules to the expansions themselves (so "CO., LTD." version -&gt; stripped version)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const secondPass = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (const x of out) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>secondPass.push(x);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const jp = stripKabushikiKaishaJP(x); if (jp &amp;&amp; jp !== x) secondPass.push(jp);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const en = stripCoLtdEN(x); if (en &amp;&amp; en !== x) secondPass.push(en);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return uniq(secondPass);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ---------- UI ----------</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $companies = document.getElementById("companies");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $mode = document.getElementById("mode");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $sessionId = document.getElementById("sessionId");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $dictMode = document.getElementById("dictMode");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $output = document.getElementById("output");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $expanded = document.getElementById("expanded");</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const $status = document.getElementById("status");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let lastTeamUrl = "";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let lastPersonalUrl = "";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function parseCompanies(text) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Each non-empty line is one "input token"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return text.split(/\r?\n/).map(x =&gt; x.trim()).filter(Boolean);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function build() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const input = parseCompanies($companies.value);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const mode = $mode.value;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dictOn = ($dictMode.value === "ON");</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const expanded = expandNames(input, dictOn);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Team URL: no sessionId</p>
+<p class="p1"><span class="Apple-converted-space">    </span>lastTeamUrl = buildSNUrl({ mode, names: expanded, sessionId: "" });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Personal URL: with sessionId if provided</p>
+<p class="p1"><span class="Apple-converted-space">    </span>lastPersonalUrl = buildSNUrl({ mode, names: expanded, sessionId: $sessionId.value });</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>$output.value =</p>
+<p class="p1">`[Team Share URL - no sessionId]</p>
+<p class="p1">${lastTeamUrl}</p>
+<p class="p2"><br></p>
+<p class="p1">[Personal URL - with sessionId (optional)]</p>
+<p class="p1">${lastPersonalUrl}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>$expanded.value = expanded.join("\n");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const approxLen = lastTeamUrl.length;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const warn = approxLen &gt; 7000 ? "（⚠️ 可能过长，若打开异常建议减少公司数或关闭字典）" : "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>$status.textContent = `已生成：公司关键词 ${expanded.length} 个；Team URL 长度 ${approxLen}${warn}`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>async function copyText(text) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await navigator.clipboard.writeText(text);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return true;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("buildBtn").addEventListener("click", build);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("copyTeamBtn").addEventListener("click", async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!lastTeamUrl) build();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const ok = await copyText(lastTeamUrl);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>$status.textContent = ok ? "已复制团队共享版 URL" : "复制失败：请手动选中输出框复制";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("copyPersonalBtn").addEventListener("click", async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!lastPersonalUrl) build();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const ok = await copyText(lastPersonalUrl);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>$status.textContent = ok ? "已复制个人版 URL" : "复制失败：请手动选中输出框复制";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Build once on load with whatever is in the textarea</p>
+<p class="p1"><span class="Apple-converted-space">  </span>build();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
